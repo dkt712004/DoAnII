@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Authentication-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Authentication-Service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Authentication-Service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Authentication-Service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Discovery-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Discovery-Service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Discovery-Service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Discovery-Service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/DoAnII.iml" filepath="$PROJECT_DIR$/DoAnII.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gateway-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Gateway-Service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gateway-Service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Gateway-Service.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/User-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/User-Service.main.iml" />
+    </modules>
+  </component>
+</project>
