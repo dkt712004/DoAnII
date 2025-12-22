@@ -10,6 +10,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gateway-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Gateway-Service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Gateway-Service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Gateway-Service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/User-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/User-Service.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.dkt.Authentication-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.dkt.Authentication-Service.main.iml" />
     </modules>
   </component>
 </project>
