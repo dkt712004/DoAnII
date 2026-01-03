@@ -2,6 +2,7 @@ package com.dkt.authenticationservice.service;
 
 import com.dkt.authenticationservice.entity.UserEntity;
 import com.dkt.authenticationservice.repository.UserEntityRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -14,7 +15,7 @@ import java.util.UUID;
 public class RedisCacheService {
 
     private final RedisTemplate<String, Object> redisTemplate;
-    private final UserEntityRepository userEntityRepository;
+    private final ObjectMapper objectMapper;
 
     /**
      * Method for save session of user
@@ -24,7 +25,7 @@ public class RedisCacheService {
     public String pushSession(UserEntity userEntity) {
         try {
             String sessionId = UUID.randomUUID().toString().replaceAll("-", "");
-            redisTemplate.opsForValue().set(sessionId, userEntity);
+            redisTemplate.opsForValue().set(sessionId, objectMapper.writeValueAsString(userEntity));
             return sessionId;
         } catch (Exception e) {
             e.printStackTrace();
@@ -34,7 +35,8 @@ public class RedisCacheService {
 
     public UserEntity getSession(String sessionId) {
         try {
-            return (UserEntity) redisTemplate.opsForValue().get(sessionId);
+            String userEntity = (String) redisTemplate.opsForValue().get(sessionId);
+            return objectMapper.readValue(userEntity, UserEntity.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
