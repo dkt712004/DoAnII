@@ -69,10 +69,19 @@ public class RedisAuthenticationFilter extends OncePerRequestFilter {
             } catch (Exception e) {
                 log.error("Lỗi khi xác thực Redis: {}", e.getMessage());
                 SecurityContextHolder.clearContext();
+                
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        // Nếu request gọi vào đường dẫn mô phỏng lỗi (/api/users/stateless),
+        // thì bộ lọc Redis này sẽ ĐỨNG IM, không can thiệp.
+        return path.startsWith("/api/users/stateless");
     }
 
     private String extractToken(HttpServletRequest request) {

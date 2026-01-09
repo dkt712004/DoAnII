@@ -63,6 +63,17 @@ public class StatefulJwtAuthFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        // BỔ SUNG THÊM: Bỏ qua nếu đường dẫn thuộc về Redis (api/auth/v1) hoặc User (api/users)
+        // Để tránh việc bộ lọc cũ này xen vào xóa quyền của bộ lọc Redis
+        return path.startsWith("/api/sc2") ||
+                path.startsWith("/api/auth/v1") ||
+                path.startsWith("/api/users/me1");
+    }
+
 
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(this.jwtSecret);

@@ -18,16 +18,16 @@ public class UserController {
 
     private final UserService userService;
 
-//    @GetMapping("/me")
-//    public ResponseEntity<?> getMyProfile(Authentication authentication) {
-//        try {
-//            String username = authentication.getName();
-//            UserProfileDto userProfile = userService.getUserProfileByUsername(username);
-//            return ResponseEntity.ok(userProfile);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(404).body(e.getMessage());
-//        }
-//    }
+    @GetMapping("/me1")
+    public ResponseEntity<?> getMyProfile(Authentication authentication) {
+        try {
+            String username = authentication.getName();
+            UserProfileDto userProfile = userService.getUserProfileByUsername(username);
+            return ResponseEntity.ok(userProfile);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        }
+    }
 @GetMapping("/me")
 public ResponseEntity<?> getMyInfo() {
     // Lấy authentication từ SecurityContext
