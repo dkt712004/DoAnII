@@ -1,5 +1,6 @@
 package com.dkt.authenticationservice.config;
 
+import com.dkt.authenticationservice.jwt.Scenario2Filter;
 import com.dkt.authenticationservice.jwt.StatefulJwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +19,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final Scenario2Filter scenario2Filter;
     private final StatefulJwtAuthFilter statefulJwtAuthFilter;
+    private final RedisSessionAuthFilter redisSessionAuthFilter;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -32,11 +35,18 @@ public class SecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/sc2/login").permitAll() // Cho phép login kịch bản 2
+                        .requestMatchers("/api/auth/v1/check", "/api/auth/v1/logout").authenticated()
+                        .requestMatchers("/api/sc2/**").authenticated()
+                        .requestMatchers("/api/users/me1").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/auth-redis/**").permitAll()
                         .anyRequest().authenticated()
                 )
+                .addFilterBefore(scenario2Filter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(redisSessionAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(statefulJwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

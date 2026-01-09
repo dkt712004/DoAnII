@@ -85,7 +85,7 @@ Hệ thống rơi vào trạng thái nhận thức không nhất quán về phi�
 JWT là cơ chế xác thực không lưu trạng thái (stateless), trong khi việc thu hồi token (revoke) lại phụ thuộc vào trạng thái.  
 Khi trạng thái này không được chia sẻ hoặc đồng bộ giữa các instance, hội chứng chia não xảy ra.
 
-### NHÓM 2 - MỘT SỐ KỊCH BẢN MÔ PHỎNG VỚI QUẢN LÝ QUYỀN
+
 #### KỊCH BẢN 3: MÔ PHỎNG HỘI CHỨNG CHIA NÃO TRONG QUẢN LÝ QUYỀN KHI AUTH-SERVICE THAY ĐỔI QUYỀN TRONG PHIÊN NHƯNG USER-SERVICE VẪN NHẬN QUYỀN CŨ
 
 Kịch bản này mô phỏng tình huống quyền của người dùng bị thay đổi trong khi phiên đăng nhập vẫn còn hiệu lực, nhưng sự thay đổi này không được phản ánh đồng bộ giữa các service.

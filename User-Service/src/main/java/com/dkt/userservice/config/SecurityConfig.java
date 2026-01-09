@@ -15,6 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final RedisAuthenticationFilter redisAuthenticationFilter;
+    private final StatelessJwtFilter statelessJwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -22,9 +23,13 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/users/stateless/**").permitAll()
+                        .requestMatchers("/api/users/me1").authenticated()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(redisAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+                .addFilterBefore(redisAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(statelessJwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

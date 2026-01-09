@@ -26,8 +26,8 @@ public class InMemoryTokenStore {
 //        return validTokens.contains(token);
     }
 
-    public void invalidateToken(String token) {
-//        validTokens.remove(token);
-        getListToken().remove(token);
+    public boolean invalidateToken(String token) {
+        // Hàm remove của List/Set trả về true nếu xóa thành công, false nếu không tìm thấy
+        return getListToken().remove(token);
     }
 }

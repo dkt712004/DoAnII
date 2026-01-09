@@ -13,6 +13,22 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Authentication-Service-2" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/Authentication-Service-2" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
+        <option name="externalProjectPath" value="$PROJECT_DIR$/Authentication-Service-3" />
+        <option name="modules">
+          <set>
+            <option value="$PROJECT_DIR$/Authentication-Service-3" />
+          </set>
+        </option>
+      </GradleProjectSettings>
+      <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/Discovery-Service" />
         <option name="gradleJvm" value="17" />
         <option name="modules">

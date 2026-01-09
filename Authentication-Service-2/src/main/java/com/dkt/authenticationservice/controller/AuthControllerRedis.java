@@ -8,12 +8,10 @@ import com.dkt.authenticationservice.service.AuthService; // Sửa lỗi 1
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -22,6 +20,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthControllerRedis {
 
     private final AuthService authService;
+
+    @Value("${server.port}")
+    private String serverPort;
 
     /**
      * Flow login: so sánh username và password(có thể dùng thuật toán hash)
@@ -50,6 +51,20 @@ public class AuthControllerRedis {
 
         // Gọi service để xử lý logic xóa session
         BaseResponse<?> response = authService.logout(sessionId);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/check")
+    public ResponseEntity<BaseResponse<String>> checkToken() {
+
+        log.info("REDIS GIẢI PHÁP: Kiểm tra thành công! Session tồn tại trong Redis. Xử lý bởi Port: {}", serverPort);
+
+        BaseResponse<String> response = new BaseResponse<>(
+                "00",
+                "GIẢI PHÁP REDIS: Token HỢP LỆ (Đã đồng bộ). Xử lý bởi Port: " + serverPort,
+                null
+        );
 
         return ResponseEntity.ok(response);
     }

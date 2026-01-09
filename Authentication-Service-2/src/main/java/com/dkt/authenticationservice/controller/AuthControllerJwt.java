@@ -37,6 +37,9 @@ public class AuthControllerJwt {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    @Value("${server.port}")
+    private String serverPort;
+
     @PostMapping("/login")
     public ResponseEntity<BaseResponse<LoginResponse>> loginWithJwt(@RequestBody LoginRequest loginRequest) {
         BaseResponse<UserEntity> authResponse = authService.authenticate(loginRequest.getUsername(), loginRequest.getPassword());
@@ -54,7 +57,8 @@ public class AuthControllerJwt {
         data.setUsername(authenticatedUser.getUsername());
         data.setSessionId(token);
 
-        BaseResponse<LoginResponse> successResponse = new BaseResponse<>("00", "Đăng nhập bằng JWT thành công!", data);
+        BaseResponse<LoginResponse> successResponse = new BaseResponse<>("00",
+                "Đăng nhập thành công tại Auth-Service Port: " + serverPort, data);
         return ResponseEntity.ok(successResponse);
     }
 
@@ -62,12 +66,30 @@ public class AuthControllerJwt {
     public ResponseEntity<BaseResponse<String>> logout(HttpServletRequest request) {
         String token = extractJwtFromRequest(request);
 
-        if (token != null) {
-            tokenStore.invalidateToken(token);
+        // 1. Kiểm tra nếu không gửi token lên
+        if (token == null) {
+            return ResponseEntity.badRequest()
+                    .body(new BaseResponse<>("AUTH_400", "Vui lòng gửi Token để đăng xuất", null));
         }
 
-        BaseResponse<String> response = new BaseResponse<>("00", "Đăng xuất thành công!", null);
-        return ResponseEntity.ok(response);
+        // 2. Gọi hàm xóa và nhận kết quả (True/False)
+        boolean isRemoved = tokenStore.invalidateToken(token);
+
+        log.info("Xử lý Đăng xuất tại Instance chạy port: {}", serverPort);
+
+        if (isRemoved) {
+            // Trường hợp 1: Tìm thấy token và xóa thành công
+            return ResponseEntity.ok(new BaseResponse<>("00",
+                    "Đăng xuất thành công tại Auth-Service Port: " + serverPort, null));
+        } else {
+            // Trường hợp 2: Không tìm thấy token trong RAM (Token rác hoặc Token của Instance khác)
+            log.warn("Đăng xuất thất bại tại Port {}: Token không tồn tại trong bộ nhớ.", serverPort);
+
+            // Trả về lỗi để client biết
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new BaseResponse<>("AUTH_404",
+                            "Đăng xuất thất bại! Token không tồn tại (hoặc đang nằm ở Instance khác). Port: " + serverPort, null));
+        }
     }
 
     private String extractJwtFromRequest(HttpServletRequest request) {

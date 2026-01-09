@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Authentication-Service-3.Authentication-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Authentication-Service-3.Authentication-Service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Authentication-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Authentication-Service.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Authentication-Service.test.iml" filepath="$PROJECT_DIR$/.idea/modules/Authentication-Service.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Discovery-Service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/Discovery-Service.main.iml" />

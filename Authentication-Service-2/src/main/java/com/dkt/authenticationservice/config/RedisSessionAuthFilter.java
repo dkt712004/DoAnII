@@ -13,6 +13,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -31,39 +32,57 @@ public class RedisSessionAuthFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+
+        // NẾU đường dẫn bắt đầu bằng /api/sc2 (Kịch bản JWT In-Memory)
+        // HOẶC bắt đầu bằng /api/users/stateless (Kịch bản JWT lỗi)
+        // THÌ return true (Nghĩa là: Bỏ qua, đừng chạy filter này)
+        return path.startsWith("/api/sc2") || path.startsWith("/api/users/stateless");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+        log.info(">>> REDIS FILTER: Bắt đầu kiểm tra request: {}", request.getServletPath());
         String sessionId = extractSessionId(request);
 
         if (sessionId != null) {
+            log.info(">>> REDIS FILTER: Tìm thấy SessionID: {}", sessionId);
             try {
                 // 1. Lấy dữ liệu từ Redis
                 Object rawData = redisTemplate.opsForValue().get(sessionId);
 
                 if (rawData != null) {
-                    // 2. Convert dữ liệu lấy được thành SessionData
-                    SessionData sessionData = objectMapper.convertValue(rawData, SessionData.class);
+                    log.info(">>> REDIS FILTER: Tìm thấy dữ liệu trong Redis!");
 
-                    // 3. Tạo quyền (Authorities) - Giả sử user có role mặc định nếu trong session không có
+                    // 2. Convert dữ liệu
+                    SessionData sessionData = objectMapper.convertValue(rawData, SessionData.class);
+                    log.info(">>> REDIS FILTER: Convert thành công user: {}", sessionData.getUsername());
+
+                    // 3. Tạo quyền
                     List<String> roles = sessionData.getRoles() != null ? sessionData.getRoles() : Collections.emptyList();
                     var authorities = roles.stream()
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 
-                    // 4. Thiết lập Authentication cho Spring Security
+                    // 4. Set Authentication
                     User principal = new User(sessionData.getUsername(), "", authorities);
                     var auth = new UsernamePasswordAuthenticationToken(principal, sessionId, authorities);
-
-                    // Lưu SessionData vào details để controller có thể lấy dùng
                     auth.setDetails(sessionData);
 
                     SecurityContextHolder.getContext().setAuthentication(auth);
+                    log.info(">>> REDIS FILTER: ✅ Xác thực thành công!");
+                } else {
+                    log.warn(">>> REDIS FILTER: ❌ Không tìm thấy dữ liệu trong Redis (Token sai hoặc hết hạn)");
                 }
             } catch (Exception e) {
-                log.error("Lỗi xác thực Redis Session: {}", e.getMessage());
+                log.error(">>> REDIS FILTER: 🔥 LỖI EXCEPTION: {}", e.getMessage());
                 SecurityContextHolder.clearContext();
             }
+        } else {
+            log.warn(">>> REDIS FILTER: ⚠️ Không tìm thấy Token trong Header");
         }
 
         filterChain.doFilter(request, response);
